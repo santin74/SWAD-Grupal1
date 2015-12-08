@@ -1,0 +1,131 @@
+Titulo (**lo ponemos al final, cuando tengamos los resultados**)
+==================
+Autores:  Grupo 17 Software análisis de datos*
+
+*Todos los autores contribuyeron por igual al desarrollo de este estudio (**esto si os parece adecuado, claro!**)
+
+Nota de los autores:
+-------------------------
+Dentro del curso *"Software para el análisis de datos"* se nos ha solicitado realizado trabajar con una base de datos, para familiarizarnos con R, así como con las herramientas de trabajo grupal. Aunque hemos seleccionado la base "Plasma Retinol/Beta-Carotene dataset" obtenido de la página <http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets>", ninguno de nosotros tenemos experiencia en este tema en concreto. Las preguntas las hemos desarrollado observando los datos de la base, por lo que podría suceder que algunas de estas preguntas ya tengan respuestas a día de hoy. 
+
+Introducción
+-------------
+Desde hace varias décadas que se viene sugiriendo la relación del beta-caroteno y el retinol (vitamina A) con el cáncer (Peto et al. Nature, 1981; Wald, Cáncer survey, 1987). Sin embargo, aún no se conoce bien qué determina la concentración plasmática de estas sustancias.  En este trabajo nos proponemos conocer 
+ 
+1. Saber si existe relación entre la ingesta de beta-carotenos y retinoides con los niveles plasmáticos de los mismos.
+2. Estudiar si los niveles de retinoides y betacarotenos se asocian con la edad o el sexo
+3. Detectar cuál es la variable o combinación de variables más fuertemente correlacioda con el IMC (Quetelet). (Quizá lo de "combinación de variables" añada una complicación extra al problema)
+ 
+Encontramos comentarios en el mismo abstract del dataset, con cuestiones de interés a las que concluiremos con nuestro estudio de los datos:
+
+4. Estudiar los niveles plasmáticos de retinoides y betacarotenos que se asocian con la ingesta de alcohol y estado fumador
+5. Estudiar los niveles de betacarotenos y retinoides que se asocian con el colesterol. (Esta pregunta podría ser mas fácil de solucionar que la numero 4 en mi opinión)
+6. Relación entre la concentración de plasma de betacaroteno, con su ingesta, como relación con consumo de fibra, uso de vitamina, colesterol 
+7. Relación entre las concentraciones de retinol y betacaroteno
+
+Material y Métodos
+-----------------
+Se han incorporado en el estudio 315 hombres y mujeres adultos, que han aceptado participar en el mismo. Para cada uno de ellos se rellenó un cuestionario incluyendo características generales (sexo, edad, peso, altura) así como cuestiones referentes a sus hábitos alimenticios, tóxicos, y el uso de suplementos vitamínicos. Referente a los hábitos tóxicos se recogió información acerca del consumo de alcohol y tabaco. Las característica generales de los pacientes, así como los hábitos tóxicos y la utilización de suplementos vitamínicos se muestran en la Tabla 1.
+Entre los hábitos alimenticios se consideró: ingesta calórica, consumo de grasas, consumo de fibras, consumo de colesterol, ingesta de retinoides y carotenos en la dieta. A todos los individuos se le midieron los niveles plasmáticos de beta-caroteno y retinol. (**esto no lo he incluido en la tabla 1, porque creo, por un lado que no deberíamos mezclar hombres y mujeres (ejemplo, calorías, consumo de alimentos..) y por otro lado porque me temo que algunas de estas variables están relacionadas (como seria la ingesta de grasas y las calorías**) 
+
+Las variables que se recogieron, el tipo y clasificación de las mismas se presentan en el Material Suplementario.
+
+Tabla 1. Características de los participantes en el estudio.
+
+t1                        | t2               | t3
+--------------------------|------------------|---
+Sexo                      |Mujeres           |273
+                          |Hombres           |42
+Edad media (rango de edad)|                  |50.15 (19-83)
+Índice Quetelet (kg/m2)   |<20               |22
+                          |20-24.9           |142
+                          |25-29.9           |89
+                          |30-34.9           |33
+                          |35-39.9           |16
+                          |>40               |13
+Hábito tabáquico          |No fumador        |157
+                          |Ex-fumador        |115
+                          |Fumador           |43
+Suplementos vitamínicos   |No utilizados     |111
+                          |De forma ocasional|82
+                          |Diariamente       |122
+Consumo alcohol           |                  |3.279 (0-203)
+(número de bebidas/día)
+
+
+
+	 
+ 
+```{r include=FALSE}
+library(Rcmdr)
+library(lattice)
+load(url('http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/plasma.sav'))
+class(plasma)
+names(plasma)
+```
+```{r}
+
+summary(plasma)
+
+#Código recodificación:
+plasma <- within(plasma, {rango_edad <- Recode(age,   '19:30="<30"; 30:39="30-39"; 40:49="40-49"; 50:59="50-59"; 60:69="60-69"; 70:79="70-79"; 80:83="80 o más"',  as.factor.result=TRUE)})  
+
+#Código R para hacer rangos quetelet:
+
+sum(plasma$quetelet<20)
+sum(20<= plasma$quetelet&plasma$quetelet <=24.99)
+
+sum(25<= plasma$quetelet&plasma$quetelet <=29.99)
+
+sum(30<= plasma$quetelet&plasma$quetelet <=34.99)
+
+sum(35<= plasma$quetelet&plasma$quetelet <=39.99)
+
+sum(plasma$quetelet>40)
+```
+
+Resultados
+-----------
+En la tabla 2 se representa el rango de edad de los participantes según el sexo.
+ 
+Tabla2. Rango de edad según sexo de los participantes en el estudio
+```{r fig.width=7, fig.height=6, echo=FALSE}
+with(plasma, Barplot(rango_edad, by=sex, style="parallel", legend.pos="topright", xlab="rango_edad", ylab="Frequency", col=c("red","blue")))
+```
+
+ 
+
+
+
+
+
+Discusión
+----------
+
+Referencias
+---------
+Peto R, Doll R, Buckley JD, Sporn MB. *Can dietary beta-carotene materially reduce human cancer rates?* Nature. 1981 Mar 19;290(5803):201-8. Review. PMID: 7010181
+
+Wald N. *Retinol, beta-carotene and cancer.* Cancer Surv. 1987;6(4):635-51. PMID: 3330683
+
+
+**Material Suplementario**. Variables recogidas, tipo y clasificación de las mismas. (**esta es la pregunta 2**)
+
+Se han recogido 14 variables para cada uno de los 315 participantes en el estudio. Las variables fueron:
+
+* "age": edad del paciente (años). Variable cuantitativa .
+* "sex": sexo del paciente. Variable cualitativa: "female" or "male".
+* "smokstat": estado de fumador. Variable cualitativa: "never", "former", "current smoker".
+* "quetelet": Quetelex index, es un índice de masa corporal (Peso sobre altura al cuadrado). Variable cuantitativa
+* "vituse" : consumo de vitaminas. Variable cualitativa: "yes, fairly often"; "yes, not often"; "no".
+* "calories": número de calorías consumidas por día. Variable cuantitativa
+* "fat": gramos de grasa consumida por día. Variable cuantitativa
+* "fiber": gramos de fibra consumida por día. Variable cuantitativa
+* "alcohol": número de bebidas alcohólicas consumidas por día. Variable cuantitiva
+* "cholesterol": consumo de colesterol diario (mg/día). Variable cuantitativa
+* "betadiet": cantidad de beta-caroteno consumido en la dieta (mcg por día). Variable cuantitiva
+* "retdiet": cantidad de retinoides consumido en la dieta (mcg por día). Variable cuantitativa
+* "betaplasma": cantidad de beta-caroteno en plasma (ng/ml). Variable cuantitiva
+* "retplasma": cantidad de retinoides en plasma (ng/ml). Variable cuantitativa
+
+
